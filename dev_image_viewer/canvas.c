@@ -139,9 +139,9 @@ static void _canvas_downsize(canvas_data_t* priv)
 
 			// bake the background color in. because original bitmap was
 			// already baked, this only happens to right/bottom edges.
-			r += (back_r * (255 - a) / 256);
-			g += (back_g * (255 - a) / 256);
-			b += (back_b * (255 - a) / 256);
+			r += back_r * (255 - a) / 255;
+			g += back_g * (255 - a) / 255;
+			b += back_b * (255 - a) / 255;
 			a = 255;
 
 			((DWORD*)bits)[desty * downsized_width + destx] =
@@ -174,9 +174,9 @@ static bool _canvas_reload(canvas_data_t* priv)
 			g = (*pixel >> 8) & 0xFF;
 			b = *pixel & 0xFF;
 			a = (*pixel >> 24);
-			r += (back_r * (255 - a) / 256);
-			g += (back_g * (255 - a) / 256);
-			b += (back_b * (255 - a) / 256);
+			r += back_r * (255 - a) / 255;
+			g += back_g * (255 - a) / 255;
+			b += back_b * (255 - a) / 255;
 			a = 255;
 			*pixel = (a << 24) | (r << 16) | (g << 8) | b;
 		}
