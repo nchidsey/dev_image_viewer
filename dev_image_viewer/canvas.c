@@ -110,6 +110,10 @@ static void _canvas_downsize(canvas_data_t* priv)
 		return;
 	}
 
+	int back_r = (priv->bg_color >> 16) & 0xFF;
+	int back_g = (priv->bg_color >> 8) & 0xFF;
+	int back_b = priv->bg_color & 0xFF;
+
 	int r, g, b, a;
 	DWORD src_pixel;
 	int scale_sqr = scale * scale;
@@ -132,6 +136,13 @@ static void _canvas_downsize(canvas_data_t* priv)
 			g /= scale_sqr;
 			b /= scale_sqr;
 			a /= scale_sqr;
+
+			// bake the background color in. because original bitmap was
+			// already baked, this only happens to right/bottom edges.
+			r += (back_r * (255 - a) / 256);
+			g += (back_g * (255 - a) / 256);
+			b += (back_b * (255 - a) / 256);
+			a = 255;
 
 			((DWORD*)bits)[desty * downsized_width + destx] =
 				(a << 24) | (r << 16) | (g << 8) | b;
