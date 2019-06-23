@@ -498,21 +498,18 @@ void main_window_set_image(HWND hwnd, const WCHAR* path)
 
 ATOM main_window_init_class(HINSTANCE hinstance)
 {
-	WNDCLASSEXW wcex;
+	WNDCLASSW wndclass;
 
-	wcex.cbSize = sizeof(WNDCLASSEX);
+	wndclass.style = 0;
+	wndclass.lpfnWndProc = _wndproc;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = sizeof(void*);
+	wndclass.hInstance = hinstance;
+	wndclass.hIcon = LoadIcon(hinstance, MAKEINTRESOURCE(IDI_DEVIMAGEVIEWER));
+	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndclass.hbrBackground = NULL;
+	wndclass.lpszMenuName = NULL;
+	wndclass.lpszClassName = MAIN_WINDOW_CLASS;
 
-	wcex.style = 0;
-	wcex.lpfnWndProc = _wndproc;
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = sizeof(void*);
-	wcex.hInstance = hinstance;
-	wcex.hIcon = NULL;// LoadIcon(hInstance, MAKEINTRESOURCE(IDI_DEVIMAGEVIEWER));
-	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = NULL;
-	wcex.lpszMenuName = NULL;
-	wcex.lpszClassName = MAIN_WINDOW_CLASS;
-	wcex.hIconSm = NULL;// LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
-
-	return RegisterClassExW(&wcex);
+	return RegisterClassW(&wndclass);
 }

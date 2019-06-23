@@ -189,7 +189,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="dev_image_viewer.ico" />
-    <Image Include="small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
