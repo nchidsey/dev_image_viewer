@@ -200,6 +200,14 @@ static void _canvas_paint(HWND hwnd, HDC hdc, PAINTSTRUCT* ps)
 		int scaled_height;
 		int src_width;
 		int src_height;
+		int src_x;
+		int src_y;
+		int src_x2;
+		int src_y2;
+		int dest_x;
+		int dest_y;
+		int dest_x2;
+		int dest_y2;
 
 		HDC bitmap_hdc = CreateCompatibleDC(hdc);
 
@@ -216,8 +224,35 @@ static void _canvas_paint(HWND hwnd, HDC hdc, PAINTSTRUCT* ps)
 			scaled_height = priv->image_height << priv->zoom;
 		}
 
-		StretchBlt(hdc, priv->tx, priv->ty, scaled_width, scaled_height,
-			bitmap_hdc, 0, 0, src_width, src_height, SRCCOPY);
+		// Calculate new source and dest mapping for when the image is
+		// very large and/or zoomed very far in, so extremely large coordinates
+		// are avoided.
+		// Certain checking isn't needed because of the xform clamp.
+		int real_zoom = priv->zoom < 0 ? 0 : priv->zoom;
+		if (priv->tx >= 0)
+			src_x = 0;
+		else
+			src_x = (-priv->tx) >> real_zoom;
+		dest_x = (src_x << real_zoom) + priv->tx;
+
+		src_x2 = ((client_rect.right - priv->tx) >> real_zoom) + 1;
+		if (src_x2 > src_width)
+			src_x2 = src_width;
+		dest_x2 = (src_x2 << real_zoom) + priv->tx;
+
+		if (priv->ty >= 0)
+			src_y = 0;
+		else
+			src_y = (-priv->ty) >> real_zoom;
+		dest_y = (src_y << real_zoom) + priv->ty;
+
+		src_y2 = ((client_rect.bottom - priv->ty) >> real_zoom) + 1;
+		if (src_y2 > src_height)
+			src_y2 = src_height;
+		dest_y2 = (src_y2 << real_zoom) + priv->ty;
+
+		StretchBlt(hdc, dest_x, dest_y, dest_x2 - dest_x, dest_y2 - dest_y,
+			bitmap_hdc, src_x, src_y, src_x2 - src_x, src_y2 - src_y, SRCCOPY);
 
 		DeleteDC(bitmap_hdc);
 
