@@ -491,6 +491,7 @@ void main_window_set_image(HWND hwnd, const WCHAR* path)
 	canvas_set_image(priv->canvas, path);
 	_statusbar_set_message(hwnd, L"");
 	_statusbar_update_size(hwnd);
+	_statusbar_update_zoom(hwnd);
 	_main_window_update_title(hwnd);
 
 	set_file_watch(path);
